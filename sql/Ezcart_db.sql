@@ -1,15 +1,20 @@
 CREATE DATABASE ezcart;
 
+DROP DATABASE ezcart;
+
 USE ezcart;
+
 
 # Creating customer table
 CREATE TABLE customers (
 customer_id VARCHAR(50) PRIMARY KEY,
 customer_unique_id VARCHAR(50),
-customer_zip_code_prifix INT,
+customer_zip_code_prefix INT,
 customer_city VARCHAR(100),
 customer_state VARCHAR(10)
 );
+
+SELECT * FROM customers;
 
 # Creating Order table
 CREATE TABLE orders(
@@ -32,13 +37,24 @@ product_category_name VARCHAR(100) PRIMARY KEY,
 product_category_name_english VARCHAR(100)
 );
 
+DROP TABLE product_category_translation;
+
+SELECT * FROM product_category_translation;
+SELECT COUNT(*) 
+FROM product_category_translation;
+
+SELECT DISTINCT product_category_name 
+FROM product_category_translation -- Replace with your source/staging table
+WHERE product_category_name NOT IN (SELECT product_category_name FROM product_category_translation);
+
+SET FOREIGN_KEY_CHECK = 0;
 # Creating product table 
 CREATE TABLE products (
 product_id VARCHAR(50) PRIMARY KEY,
 product_category_name VARCHAR(100),
 product_name_length INT,
 product_description_length INT,
-product_photo_qty INT,
+product_photos_qty INT,
 product_weight_g INT,
 product_length_cm INT,
 product_height_cm INT,
@@ -47,6 +63,8 @@ product_width_cm INT,
 FOREIGN KEY (product_category_name)
 REFERENCES product_category_translation(product_category_name)
 );
+
+DROP TABLE PRODUCTS;
 
 # Creating seller table
 CREATE TABLE sellers (
