@@ -2,8 +2,11 @@ import os
 import mysql.connector as mysql
 from dotenv import load_dotenv
 from mysql.connector import Error
-from queries import (INSERT_CUSTOMERS, INSERT_PRODUCT_CATEGORY_TRASLATION,INSERT_PRODUCTS)
-from utils import (CATEGORY_TRANSLATION, CUSTOMER_DATA, PRODUCTS_DATA)
+from queries import (INSERT_CUSTOMERS, INSERT_PRODUCT_CATEGORY_TRASLATION,
+                     INSERT_PRODUCTS,
+                     INSERT_SELLER,
+                     INSERT_ORDERS)
+from utils import (CATEGORY_TRANSLATION, CUSTOMER_DATA, PRODUCTS_DATA,SELLERS_DATA,ORDERS_DATA)
 
 # Load environment variables
 load_dotenv()
@@ -34,8 +37,6 @@ def main():
         # Create cursor
         cursor = connection.cursor()
 
-        # Disable foreign key checks to allow bulk import of data with potential inconsistencies
-        cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
 
         # Keep customer loader unchanged
         def load_customer():
@@ -44,7 +45,7 @@ def main():
             print(f"Inserted {cursor.rowcount} records into customers table")
 
         # Run this loader last
-        load_customer()
+        #load_customer()
 
         # Load category translation
         def load_category_translation():
@@ -59,7 +60,7 @@ def main():
             )
 
         # Run this loader first
-        load_category_translation()
+        #load_category_translation()
 
         def load_products():
             cursor.executemany(
@@ -70,7 +71,30 @@ def main():
             print(f"Inserted {cursor.rowcount} records into products table")
 
         # Run only this loader
-        load_products()
+        #load_products()
+
+
+        def load_sellers():
+            cursor.executemany(
+                INSERT_SELLER,
+                SELLERS_DATA
+            )
+            connection.commit()
+            print(f"Inserted {cursor.rowcount} records into sellers table")
+
+        # Run only this loader
+        #load_sellers()  
+
+        def load_orders():
+            cursor.executemany(
+                INSERT_ORDERS,
+                ORDERS_DATA
+                    )
+            connection.commit()
+            print(f"Inserted {cursor.rowcount} records into orders table")
+        
+        # Run only this loader
+        load_orders()    
 
 
     except (Error, OSError, ValueError) as e:

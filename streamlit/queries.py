@@ -32,3 +32,28 @@ INSERT_PRODUCTS = """
     )
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
 """
+
+INSERT_SELLER = """
+    INSERT INTO sellers(
+        seller_id ,
+        seller_zip_code_prefix ,
+        seller_city,
+        seller_state
+    )
+     VALUES (%s, %s, %s, %s)
+"""
+
+INSERT_ORDERS = """
+    INSERT INTO orders(
+       order_id ,
+       customer_id,
+       order_status,
+       order_purchase_timestamp ,
+       order_approved_at ,
+       order_delivered_carrier_date ,
+       order_delivered_customer_date ,
+       order_estimated_delivery_date
+    
+    )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+"""
