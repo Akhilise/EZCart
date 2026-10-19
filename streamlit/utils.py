@@ -27,6 +27,26 @@ orders_df = pd.read_csv(
     "./data/cleaned/orders.csv"
 )
 
+# Read cleaned order items CSV
+order_item_df = pd.read_csv(
+    "./data/cleaned/order_items.csv"
+)
+
+# Read cleaned order payment CSV
+order_payment_df = pd.read_csv(
+    "./data/cleaned/order_payments.csv"
+)
+
+# Read cleaned order review CSV
+order_review_df = pd.read_csv(
+    "./data/cleaned/order_reviews.csv"
+)
+
+geolocation_df = pd.read_csv(
+    "./data/cleaned/geolocation.csv"
+)
+
+
 
 # Handle missing and unmatched product categories
 valid_categories = category_translation_df[
@@ -60,6 +80,22 @@ sellers_df = sellers_df.astype(object).where(
 
 orders_df = orders_df.astype(object).where(
     pd.notna(orders_df), None
+)
+
+order_item_df = order_item_df.astype(object).where(
+    pd.notna(order_item_df), None
+)
+
+order_payment_df = order_payment_df.astype(object).where(
+    pd.notna(order_payment_df),None
+)
+
+order_review_df = order_review_df.astype(object).where(
+    pd.notna(order_review_df),None
+)
+
+geolocation_df = geolocation_df.astype(object).where(
+    pd.notna(geolocation_df), None
 )
 
 
@@ -129,4 +165,60 @@ ORDERS_DATA = list(
            "order_estimated_delivery_date"
         ]
     ].itertuples(index=False ,name=None)
+)
+
+#Prepare order item records
+ORDER_ITEMS_DATA = list(
+     order_item_df[
+        [
+             "order_id",
+             "order_item_id",
+             "product_id",
+             "seller_id",
+             "shipping_limit_date",
+             "price",
+             "freight_value"
+        ]
+     ].itertuples(index=False, name= None)
+)
+
+# Prepare order payment records
+ORDER_PAYMENT_DATA = list(
+    order_payment_df[
+        [
+            "order_id",
+            "payment_sequential",
+            "payment_type",
+            "payment_installments",
+            "payment_value"
+        ]
+    ].itertuples(index=False, name=None)
+)
+
+# Prepare order review records
+ORDER_REVIEW_DATA = list(
+    order_review_df[
+        [
+            "review_id",
+            "order_id",
+            "review_score",
+            "review_comment_title",
+            "review_comment_message",
+            "review_creation_date",
+            "review_answer_timestamp"
+        ]
+    ].itertuples(index=False , name=None)
+)
+
+# Prepare geolocation records
+GEOLOCATION_DATA = list(
+    geolocation_df[
+        [
+            "geolocation_zip_code_prefix",
+            "geolocation_lat",
+            "geolocation_lng",
+            "geolocation_city",
+            "geolocation_state"
+        ]
+    ].itertuples(index=False, name=None)
 )

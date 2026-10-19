@@ -30,6 +30,7 @@ order_estimated_delivery_date DATETIME,
 FOREIGN KEY(customer_id)
 REFERENCES customers(customer_id)
 );
+SELECT * FROM orders;
 
 #Creating Product Category Translation table
 CREATE TABLE product_category_translation (
@@ -37,17 +38,6 @@ product_category_name VARCHAR(100) PRIMARY KEY,
 product_category_name_english VARCHAR(100)
 );
 
-DROP TABLE product_category_translation;
-
-SELECT * FROM product_category_translation;
-SELECT COUNT(*) 
-FROM product_category_translation;
-
-SELECT DISTINCT product_category_name 
-FROM product_category_translation -- Replace with your source/staging table
-WHERE product_category_name NOT IN (SELECT product_category_name FROM product_category_translation);
-
-SET FOREIGN_KEY_CHECK = 0;
 # Creating product table 
 CREATE TABLE products (
 product_id VARCHAR(50) PRIMARY KEY,
@@ -64,7 +54,7 @@ FOREIGN KEY (product_category_name)
 REFERENCES product_category_translation(product_category_name)
 );
 
-DROP TABLE PRODUCTS;
+SELECT * FROM products;
 
 # Creating seller table
 CREATE TABLE sellers (
@@ -73,6 +63,8 @@ seller_zip_code_prefix INT,
 seller_city VARCHAR(100),
 seller_state VARCHAR(10)
 );
+
+SELECT * FROM sellers;
 
 # Creating order item table
 CREATE TABLE order_items(
@@ -104,7 +96,7 @@ CREATE TABLE order_payment (
 order_id VARCHAR(50) NOT NULL,
 payment_sequential INT NOT NULL,
 payment_type VARCHAR(30),
-payment_installment INT,
+payment_installments INT,
 payment_value DECIMAL(10,2),
 
 PRIMARY KEY (order_id ,payment_sequential),
@@ -112,6 +104,8 @@ PRIMARY KEY (order_id ,payment_sequential),
 FOREIGN KEY (order_id)
 REFERENCES orders(order_id)
 );
+
+SELECT * FROM order_payment;
 
 # Creating order_review table
 
@@ -129,6 +123,7 @@ PRIMARY KEY (review_id,order_id),
 FOREIGN KEY (order_id)
 REFERENCES orders(order_id)
 );
+select * from order_reviews;
 
 # Creating geolocation table 
 CREATE TABLE geolocation(
@@ -139,11 +134,38 @@ geolocation_city VARCHAR(100),
 geolocation_state VARCHAR(50)
 );
 
+select * from geolocation;
 # SHOW ALL TABLE 
 SHOW TABLES;
 
 
+USE ezcart;
 
+SELECT 'customers' AS table_name, COUNT(*) AS total FROM customers
+UNION ALL
+SELECT 'product_category_translation', COUNT(*) FROM product_category_translation
+UNION ALL
+SELECT 'products', COUNT(*) FROM products
+UNION ALL
+SELECT 'sellers', COUNT(*) FROM sellers
+UNION ALL
+SELECT 'orders', COUNT(*) FROM orders
+UNION ALL
+SELECT 'order_items', COUNT(*) FROM order_items
+UNION ALL
+SELECT 'order_payment', COUNT(*) FROM order_payment
+UNION ALL
+SELECT 'order_reviews', COUNT(*) FROM order_reviews
+UNION ALL
+SELECT 'geolocation', COUNT(*) FROM geolocation;
+
+SELECT DATABASE();
+
+SELECT @@hostname, @@port, CURRENT_USER();
+
+SELECT COUNT(*) FROM ezcart.order_payment;
+SELECT COUNT(*) FROM ezcart.order_reviews;
+SELECT COUNT(*) FROM ezcart.geolocation;
 
 
 

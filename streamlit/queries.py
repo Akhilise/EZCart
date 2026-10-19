@@ -57,3 +57,51 @@ INSERT_ORDERS = """
     )
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
 """
+
+INSERT_ORDER_ITEMS = """
+    INSERT INTO order_items(
+        order_id,
+        order_item_id,
+        product_id,
+        seller_id,
+        shipping_limit_date,
+        price,
+        freight_value
+     )
+     VALUES (%s, %s, %s, %s, %s, %s, %s)
+"""
+
+INSERT_ORDER_PAYMENT= """
+    INSERT INTO order_payment(
+         order_id,
+         payment_sequential,
+         payment_type,
+         payment_installments,
+         payment_value
+    ) 
+    VALUES(%s, %s, %s, %s, %s)
+"""
+
+INSERT_ORDER_REVIEWS = """
+    INSERT INTO order_reviews(
+        review_id,
+        order_id,
+        review_score,
+        review_comment_title,
+        review_comment_message,
+        review_creation_date,
+        review_answer_timestamp
+    )
+    VALUES(%s, %s, %s, %s, %s, %s, %s)
+"""
+
+INSERT_GEOLOCATION = """
+    INSERT INTO geolocation (
+        geolocation_zip_code_prefix,
+        geolocation_lat,
+        geolocation_lng,
+        geolocation_city,
+        geolocation_state
+    )
+    VALUES (%s, %s, %s, %s, %s)
+"""

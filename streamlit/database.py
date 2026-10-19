@@ -5,8 +5,20 @@ from mysql.connector import Error
 from queries import (INSERT_CUSTOMERS, INSERT_PRODUCT_CATEGORY_TRASLATION,
                      INSERT_PRODUCTS,
                      INSERT_SELLER,
-                     INSERT_ORDERS)
-from utils import (CATEGORY_TRANSLATION, CUSTOMER_DATA, PRODUCTS_DATA,SELLERS_DATA,ORDERS_DATA)
+                     INSERT_ORDERS,
+                     INSERT_ORDER_ITEMS,
+                     INSERT_ORDER_PAYMENT,
+                     INSERT_ORDER_REVIEWS,
+                     INSERT_GEOLOCATION)
+from utils import (CATEGORY_TRANSLATION, 
+                   CUSTOMER_DATA, 
+                   PRODUCTS_DATA,
+                   SELLERS_DATA,
+                   ORDERS_DATA,
+                   ORDER_ITEMS_DATA,
+                   ORDER_PAYMENT_DATA,
+                   ORDER_REVIEW_DATA,
+                   GEOLOCATION_DATA)
 
 # Load environment variables
 load_dotenv()
@@ -94,9 +106,53 @@ def main():
             print(f"Inserted {cursor.rowcount} records into orders table")
         
         # Run only this loader
-        load_orders()    
+        #load_orders()    
 
+        def load_order_items():
+            cursor.executemany(
+                INSERT_ORDER_ITEMS,
+                ORDER_ITEMS_DATA
+            )
+            connection.commit()
+            print(f"Inserted {cursor.rowcount} records into orders items table")
+        
+        # Run only this loader
+        #load_order_items() 
+        
+        def load_order_payments():
+         cursor.executemany(
+             INSERT_ORDER_PAYMENT,
+             ORDER_PAYMENT_DATA
+            )
+         connection.commit()
+         print(f"Inserted {cursor.rowcount} records into order_payment table")
+         
+         
+        #load_order_payments()
+  
+  
 
+        def load_order_reviews():
+            cursor.executemany(
+                INSERT_ORDER_REVIEWS,
+                ORDER_REVIEW_DATA
+            )
+            connection.commit()
+            print(f"Inserted {cursor.rowcount} records into order_reviews table")
+        
+        
+        #load_order_reviews()
+    
+        def load_geolocation():
+            cursor.executemany(
+                INSERT_GEOLOCATION,
+                GEOLOCATION_DATA
+            )
+            connection.commit()
+            print(f"Inserted {cursor.rowcount} records into geolocation table")
+            
+        load_geolocation()
+        
     except (Error, OSError, ValueError) as e:
         if connection is not None and connection.is_connected():
             connection.rollback()
