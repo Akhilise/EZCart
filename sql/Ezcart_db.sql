@@ -159,13 +159,7 @@ SELECT 'order_reviews', COUNT(*) FROM order_reviews
 UNION ALL
 SELECT 'geolocation', COUNT(*) FROM geolocation;
 
-SELECT DATABASE();
 
-SELECT @@hostname, @@port, CURRENT_USER();
-
-SELECT COUNT(*) FROM ezcart.order_payment;
-SELECT COUNT(*) FROM ezcart.order_reviews;
-SELECT COUNT(*) FROM ezcart.geolocation;
 
 
 
