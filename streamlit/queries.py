@@ -105,3 +105,102 @@ INSERT_GEOLOCATION = """
     )
     VALUES (%s, %s, %s, %s, %s)
 """
+
+
+
+BUSINESS_OVERVIEW_QUERY = """
+SELECT
+    (SELECT ROUND(SUM(price + freight_value), 2)
+     FROM order_items) AS total_revenue,
+
+    (SELECT COUNT(DISTINCT order_id)
+     FROM orders) AS total_orders,
+
+    (SELECT COUNT(DISTINCT customer_unique_id)
+     FROM customers) AS total_customers,
+
+    (SELECT COUNT(DISTINCT seller_id)
+     FROM sellers) AS total_sellers,
+
+    (SELECT ROUND(AVG(order_value), 2)
+     FROM (
+         SELECT order_id, SUM(price + freight_value) AS order_value
+         FROM order_items
+         GROUP BY order_id
+     ) AS order_totals) AS average_order_value,
+
+    (SELECT ROUND(AVG(review_score), 2)
+     FROM order_reviews) AS average_review_score;
+"""
+
+MONTHLY_REVENUE_QUERY = """
+SELECT
+    DATE_FORMAT(o.order_purchase_timestamp, '%Y-%m') AS order_month,
+    COUNT(DISTINCT o.order_id) AS total_orders,
+    ROUND(SUM(oi.price + oi.freight_value), 2) AS total_revenue
+FROM orders o
+JOIN order_items oi
+    ON o.order_id = oi.order_id
+GROUP BY order_month
+ORDER BY order_month;
+"""
+
+YEARLY_REVENUE_QUERY = """
+SELECT
+    YEAR(o.order_purchase_timestamp) AS order_year,
+    COUNT(DISTINCT o.order_id) AS total_orders,
+    ROUND(SUM(oi.price + oi.freight_value), 2) AS total_revenue
+FROM orders o
+JOIN order_items oi
+    ON o.order_id = oi.order_id
+GROUP BY order_year
+ORDER BY order_year;
+"""
+
+CATEGORY_REVENUE_QUERY = """
+SELECT
+    COALESCE(
+        pct.product_category_name_english,
+        p.product_category_name,
+        'Unknown'
+    ) AS product_category,
+    ROUND(SUM(oi.price + oi.freight_value), 2) AS category_revenue
+FROM order_items oi
+JOIN products p
+    ON oi.product_id = p.product_id
+LEFT JOIN product_category_translation pct
+    ON p.product_category_name = pct.product_category_name
+GROUP BY product_category
+ORDER BY category_revenue DESC
+LIMIT 10;
+"""
+
+
+TOP_SELLING_PRODUCTS_QUERY = """
+SELECT
+    oi.product_id,
+    COALESCE(
+        pct.product_category_name_english,
+        p.product_category_name,
+        'Unknown'
+    ) AS product_name,
+    COUNT(DISTINCT oi.order_id) AS total_orders,
+    ROUND(SUM(oi.price), 2) AS product_revenue
+FROM order_items oi
+JOIN products p
+    ON oi.product_id = p.product_id
+LEFT JOIN product_category_translation pct
+    ON p.product_category_name = pct.product_category_name
+GROUP BY
+    oi.product_id,
+    product_name
+ORDER BY product_revenue DESC
+LIMIT 10;
+"""
+
+
+
+
+
+
+
