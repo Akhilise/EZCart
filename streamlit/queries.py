@@ -198,7 +198,127 @@ ORDER BY product_revenue DESC
 LIMIT 10;
 """
 
+SALES_BY_LOCATION_QUERY = """
+SELECT 
+   c.customer_state,
+   ROUND(SUM(price+freight_value),2)AS total_revenue
+FROM customers c
+JOIN orders o
+    ON c.customer_id = o.customer_id
+JOIN order_items oi
+    ON o.order_id = oi.order_id
+WHERE o.order_status = "delivered"
+GROUP BY c.customer_state
+ORDER BY total_revenue DESC;
+"""
 
+CUSTOMER_DISTRIBUTION_QUERY = """
+SELECT
+    customer_state,
+    COUNT(DISTINCT customer_unique_id) AS total_customers
+FROM customers
+GROUP BY customer_state
+ORDER BY total_customers DESC;
+"""
+
+CUSTOMER_SPENDING_QUERY = """
+SELECT
+    c.customer_unique_id,
+    ROUND(SUM(oi.price + oi.freight_value), 2) AS total_spending
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+JOIN order_items oi ON o.order_id = oi.order_id
+GROUP BY c.customer_unique_id
+ORDER BY total_spending DESC;
+"""
+
+REPEAT_CUSTOMER_QUERY = """
+SELECT
+    CASE
+        WHEN customer_orders > 1 THEN 'Repeat Customer'
+        ELSE 'New Customer'
+    END AS customer_type,
+    COUNT(*) AS total_customers
+FROM (
+    SELECT
+        c.customer_unique_id,
+        COUNT(DISTINCT o.order_id) AS customer_orders
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY c.customer_unique_id
+) AS customer_summary
+GROUP BY customer_type;
+"""
+
+
+TOP_CUSTOMERS_QUERY = """
+SELECT
+    c.customer_unique_id,
+    COUNT(DISTINCT o.order_id) AS total_orders,
+    ROUND(SUM(oi.price + oi.freight_value), 2) AS total_spending
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+JOIN order_items oi ON o.order_id = oi.order_id
+GROUP BY c.customer_unique_id
+ORDER BY total_spending DESC
+LIMIT 10;
+"""
+
+SELLER_REVENUE_QUERY = """
+SELECT
+    oi.seller_id,
+    COUNT(DISTINCT oi.order_id) AS total_orders,
+    ROUND(SUM(oi.price + oi.freight_value), 2) AS seller_revenue
+FROM order_items oi
+JOIN orders o
+    ON oi.order_id = o.order_id
+WHERE o.order_status = 'delivered'
+GROUP BY oi.seller_id
+ORDER BY seller_revenue DESC
+LIMIT 10;
+"""
+
+SELLER_RATINGS_QUERY = """
+SELECT
+    oi.seller_id,
+    ROUND(AVG(r.review_score), 2) AS average_rating,
+    COUNT(r.review_id) AS total_reviews
+FROM order_items oi
+JOIN order_reviews r
+    ON oi.order_id = r.order_id
+GROUP BY oi.seller_id
+HAVING COUNT(r.review_id) >= 5
+ORDER BY average_rating DESC
+LIMIT 10;
+"""
+
+CATEGORY_REVENUE_QUERY = """
+SELECT
+    COALESCE(
+        pct.product_category_name_english,
+        p.product_category_name,
+        'Unknown'
+    ) AS product_category,
+    ROUND(SUM(oi.price + oi.freight_value), 2) AS category_revenue
+FROM order_items oi
+JOIN products p
+    ON oi.product_id = p.product_id
+LEFT JOIN product_category_translation pct
+    ON p.product_category_name = pct.product_category_name
+GROUP BY product_category
+ORDER BY category_revenue DESC
+LIMIT 10;
+"""
+
+AVERAGE_DELIVERY_TIME_QUERY = """
+SELECT
+    ROUND(AVG(DATEDIFF(
+                order_delivered_customer_date,
+                order_purchase_timestamp)),2) AS average_delivery_days
+FROM orders
+WHERE order_status = 'delivered'
+  AND order_delivered_customer_date IS NOT NULL;
+"""
 
 
 
